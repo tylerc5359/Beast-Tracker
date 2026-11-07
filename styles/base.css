@@ -50,8 +50,13 @@
 
 html {
   scroll-padding-top: env(safe-area-inset-top, 0px);
-  scrollbar-gutter: stable;
   overflow-anchor: none;
+  overflow-x: hidden; /* nothing should ever scroll sideways */
+  scrollbar-width: none; /* page still scrolls with the wheel/trackpad, just without a visible bar */
+}
+
+html::-webkit-scrollbar {
+  display: none;
 }
 
 body {
