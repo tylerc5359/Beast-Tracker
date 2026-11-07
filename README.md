@@ -1,67 +1,91 @@
 # BEAST MEDIA TRACKER
 <img width="350" height="350" alt="bear-head-logo-illustration-free-vector-removebg-preview" src="https://github.com/user-attachments/assets/4af9f3b0-589c-4824-a600-cbbcc78cf0e5" />
 
+Keep track of everything you're watching, reading and playing on one shelf of cover art. Movies, shows, anime, manga,
+books, albums and games all go on one grid you arrange however you like.
 
-Desktop app (Electron) built from plain ES modules. No build step: you edit the files and reload.
+**[Download the latest version](https://github.com/tylerc5359/Beast-Tracker/releases/latest)** for Windows or Mac. It's free.
 
-## Run it
-1. Install Node.js (LTS) from nodejs.org.
-2. In this folder:
-   ```
-   npm install
-   npm run setup      # downloads Electron's engine (newer npm skips Electron's own install script)
-   npm start
-   ```
+## Installing
 
-## While you work
-- Edited `index.html`, `styles/` or `src/`? Press **Ctrl+R** in the app window.
-- Edited `main.js` or `preload.js`? Close the app and run `npm start` again.
-- **Ctrl+Shift+I** opens the developer tools (errors show in the Console).
+### Windows
+1. Download `Beast-Media-Tracker-Setup-<version>.exe` from the [latest release](https://github.com/tylerc5359/Beast-Tracker/releases/latest).
+2. Run it. The app installs and opens by itself, and adds a Start menu shortcut.
 
-## Make an installer
+If Windows says **"Windows protected your PC"**, click **More info**, then **Run anyway**. This appears because the app
+isn't signed with a paid certificate yet; you only need to do it once.
+
+### Mac
+1. Download `Beast-Media-Tracker-<version>-mac.dmg` from the [latest release](https://github.com/tylerc5359/Beast-Tracker/releases/latest).
+   It works on both Apple Silicon and Intel Macs.
+2. Open it and drag **Beast Media Tracker** into **Applications**.
+3. Open the app from Applications.
+
+The first time, macOS will say it can't check the app for malicious software. To allow it:
+1. Click **Done** (or **OK**) on the warning.
+2. Open **System Settings → Privacy & Security**, scroll down and click **Open Anyway** next to Beast Media Tracker.
+3. Confirm with your password. From then on it opens normally.
+
+If macOS instead says the app **"is damaged and can't be opened"**, open the **Terminal** app, paste this line and press Return, then open the app again:
 ```
-npm run dist
+xattr -cr "/Applications/Beast Media Tracker.app"
 ```
-The installer appears in `dist/`. On Windows, turn on Developer Mode first (Settings > For developers), or run the
-terminal as administrator, otherwise the build stops with a "symbolic link" error.
 
-## Where things are
-```
-index.html          page structure
-main.js             Electron main process (window, cover search)
-preload.js          the small bridge the page can use
-styles/             one CSS file per area, imported by styles/main.css
-src/
-  main.js           start-up: load saved data, connect every module, first draw
-  state.js          the shared `state` object (tiles, categories, layouts, mode flags)
-  storage.js        saving and loading tiles, categories, layouts
-  disk.js           where data lives: library folder in Electron, browser storage in a plain web page
-  layout.js         grid cells and row positions
-  render.js         draws the tiles
-  drag.js           drag a tile to move it
-  edit-mode.js, image-drop.js, tile-editor.js, cover-editor.js, cover-art.js,
-  size-picker.js, categories.js, selection.js, toolbar.js, menu.js, backup.js, dev-tools.js
-  backgrounds/      store, crossfade, panel, manage, transfer, index
-```
-Each module with buttons or events exports an `init...()` function; `src/main.js` calls them once.
-Anything shared between modules lives on `state` (for example `state.items`).
+## Getting started
+1. Press **Edit** (top right). Empty spots on the shelf show a **+**.
+2. Click a **+** to add a title. Give it a name, and add cover art if you like.
+3. Press **Done** when you're finished arranging.
 
-## Where your data is saved
-The desktop app keeps your library in a normal folder you can see and back up:
+Click any tile to open it again and change it.
 
-    Documents/Beast Media Tracker/
-      library.json         tiles, categories, layouts, sort, background settings (readable JSON)
-      library.json.bak     the previous session's copy (made once each time the app starts)
-      covers/              cover images and GIFs, one file each (identical images are stored once)
-      backgrounds/         background images and GIFs
+## What you can do
 
-- There is no 5 MB limit, so large GIFs work.
-- Use "Data folder" in the menu to open it. To keep it somewhere else, set the `BEAST_DATA_DIR` environment variable before starting.
-- First start: anything already saved by an older version is copied into the folder automatically (the old copy is left untouched).
-- If `library.json` is ever damaged, the app keeps it as `library.damaged-<time>.json`, restores from the backup and tells you.
-- Covers you replace or delete stay in `covers/` (they're small); you can delete files there yourself, but only when the app is closed and only ones you no longer use.
-- Opened as a plain web page (no Electron), it still uses the browser's own storage as before.
+**Cover art**
+- **Search free cover art** finds covers for movies, TV shows, anime, manga, books, albums and games.
+- Or upload your own picture, paste one (Ctrl+V / Cmd+V), drag one in, or use **Find on Google Images**.
+- Zoom with the slider or your mouse wheel, and drag the picture to choose which part shows. Animated GIFs keep moving.
 
-## Moving your data from the old version
-Your tiles live in the browser/app storage of whichever version created them. In the old version use
-**Export** (burger menu), then **Import** here. Export includes tiles, categories, order, layouts and backgrounds.
+**Tracking**
+- Rate a title by clicking the stars on its tile.
+- Drag along the bar at the bottom of a tile to set your progress, and add a note like "Season 2, ep 5".
+
+**Arranging your shelf**
+- In **Edit** mode, drag tiles anywhere. Other tiles move out of the way.
+- Make a tile bigger or smaller with the **Tile size** grid when editing it.
+- Drop image files from your computer onto empty spots to make picture tiles in one go.
+- Turn on **Basic image tile** for a tile that shows only a picture and a title.
+
+**Organizing**
+- **Categories** (in the ☰ menu) lets you make groups like *Watching* or *Backlog*, each with its own
+  sub-categories (*Movies*, *Series*…). Click a category at the top of the shelf to show only that group.
+- Use the search box to find a title, and the sort menu to order by title, rating, progress or date added.
+  **Custom** keeps your own arrangement.
+- **Select** (in the ☰ menu) lets you move, resize or delete many tiles at once.
+
+**Making it yours**
+- **Theme** switches between light and dark.
+- In **Edit** mode, **Backgrounds** lets you put your own images or GIFs behind the shelf. Use several and they fade
+  into each other as you scroll.
+
+## Your library and backups
+Everything is saved automatically on your own computer, in a folder called **Beast Media Tracker** inside your
+**Documents** folder. Choose **Data folder** in the ☰ menu to open it. Nothing is uploaded anywhere.
+
+- **Back up:** choose **Export** in the ☰ menu to save your whole library (tiles, categories, layout and backgrounds)
+  as one file. Keep a copy somewhere safe, like a USB stick or cloud drive.
+- **Restore or move to another computer:** choose **Import** and pick that file. This replaces the current library.
+- The app also keeps a copy of your previous session. If the library file ever gets damaged, the app restores it
+  automatically and tells you.
+
+## Updating
+Download the newest version from the [releases page](https://github.com/tylerc5359/Beast-Tracker/releases/latest) and
+install it the same way. Your library stays where it is.
+
+## Uninstalling
+- **Windows:** Settings → Apps → Installed apps → Beast Media Tracker → Uninstall.
+- **Mac:** drag Beast Media Tracker from Applications to the Trash.
+
+Your library folder in Documents is kept in both cases. Delete it yourself if you want it gone too.
+
+---
+Want to change the code or build it yourself? See [DEVELOPING.md](DEVELOPING.md).

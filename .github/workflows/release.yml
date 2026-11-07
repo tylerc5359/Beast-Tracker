@@ -1,0 +1,49 @@
+# Builds the Windows and Mac installers on GitHub's machines and attaches them to a release.
+# Runs whenever a version tag like v1.2.0 is pushed.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            platform: --win
+          - os: macos-latest
+            platform: --mac
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build installer
+        run: npx electron-builder ${{ matrix.platform }} --publish never
+
+      - name: Attach to release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Beast Media Tracker ${{ github.ref_name }}
+          body: |
+            **Windows:** download `Beast-Media-Tracker-Setup-….exe` and run it.
+            **Mac:** download `Beast-Media-Tracker-…-mac.dmg`, open it and drag the app into Applications.
+
+            The first time you open it, Windows or macOS may warn that the app is from an unknown developer.
+            See [Installing](https://github.com/tylerc5359/Beast-Tracker#installing) for the one-time step to allow it.
+          files: |
+            dist/*.exe
+            dist/*.dmg
