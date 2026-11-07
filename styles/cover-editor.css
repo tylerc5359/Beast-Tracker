@@ -1,0 +1,53 @@
+/* ==========================================================================
+   Cover Editor (zoom, pan, name position)
+   ========================================================================== */
+.cv-art {
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+  touch-action: none;
+  user-select: none;
+}
+
+.cv-empty[hidden],
+.cv-name[hidden] {
+  display: none;
+}
+
+.cv-name {
+  position: absolute;
+  z-index: 2;
+  width: max-content;
+  max-width: 100%;
+  padding: calc(12px * var(--pv, 1)); /* --pv = the preview's scale relative to the real tile */
+  font: 700 calc(16px * var(--pv, 1) * var(--ns, 1))/1.2 'Bricolage Grotesque', sans-serif;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85), 0 0 10px rgba(0, 0, 0, 0.55);
+  overflow-wrap: anywhere;
+  cursor: move;
+  touch-action: none;
+  user-select: none;
+  outline: 1px dashed rgba(255, 255, 255, 0.75);
+  outline-offset: -3px;
+}
+
+.zoomrow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 13px;
+  color: var(--mute);
+}
+
+.zoomrow label {
+  flex: none;
+  width: 38px; /* same width for Zoom and Text so both sliders line up */
+}
+
+.zoomrow input {
+  flex: 1;
+  width: 0;
+  min-width: 0;
+  accent-color: var(--accent);
+}
+

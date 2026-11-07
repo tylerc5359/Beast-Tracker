@@ -1,0 +1,32 @@
+{
+  "name": "beast-media-tracker",
+  "version": "1.0.0",
+  "description": "Beast Media Tracker",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "setup": "node node_modules/electron/install.js",
+    "dist": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0"
+  },
+  "build": {
+    "appId": "com.beast.mediatracker",
+    "productName": "Beast Media Tracker",
+    "icon": "build/icon.png",
+    "files": [
+      "main.js",
+      "disk-store.js",
+      "preload.js",
+      "index.html",
+      "src/**/*",
+      "styles/**/*",
+      "build/icon.png"
+    ],
+    "win": { "target": "nsis" },
+    "mac": { "target": "dmg" },
+    "linux": { "target": "AppImage" }
+  }
+}

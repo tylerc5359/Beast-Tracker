@@ -1,0 +1,74 @@
+/* ==========================================================================
+   Tile Size Picker (grid of squares: hover to preview, click to choose)
+   ========================================================================== */
+.sizefield {
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--mute);
+  grid-column: 1 / -1;
+}
+
+.sizepick {
+  width: 236px;
+}
+
+.sizegrid {
+  display: grid;
+  gap: 4px;
+}
+
+.sizecell {
+  aspect-ratio: 1;
+  min-width: 0;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--bg);
+  cursor: pointer;
+  transition: background 0.08s ease, border-color 0.08s ease;
+}
+
+/* Hover preview */
+.sizecell.on {
+  background: var(--line);
+  border-color: var(--mute);
+}
+
+/* Chosen size (wins over the preview) */
+.sizecell.sel {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.sizecell.pop {
+  animation: pop 0.25s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sizecell.pop {
+    animation: none;
+  }
+}
+
+.popwrap {
+  position: relative;
+}
+
+.sizepop {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 7;
+  padding: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+
+.sizepop[hidden] {
+  display: none;
+}
+

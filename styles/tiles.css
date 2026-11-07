@@ -1,0 +1,344 @@
+/* ==========================================================================
+   Grid & Media Tiles
+   ========================================================================== */
+main {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr)); /* always 8 tiles per row */
+  grid-auto-rows: var(--rh, 300px);
+  grid-auto-flow: dense;
+  gap: var(--gap);
+  padding: 14px var(--pad) 60px;
+}
+
+main.free {
+  grid-auto-flow: row;
+}
+
+.empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--mute);
+  padding: 70px 0;
+}
+
+.tile {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: calc(14px * var(--ts, 1));
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  border: 0;
+  padding: 0;
+  text-align: left;
+  color: #fff;
+  transform: translateY(var(--ly, 0px)) scale(var(--sc, 1));
+  transition: transform 0.22s ease-out, box-shadow 0.25s, translate 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
+  z-index: 1;
+  user-select: none;
+  container-type: size; /* lets cover zoom be sized from the tile (cqw/cqh units) */
+}
+
+.tile:hover {
+  --ly: -6px;
+  --sc: 1.03;
+  z-index: 2;
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.4);
+}
+
+.tile:active {
+  --sc: 0.985;
+}
+
+.tile .art {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.tile .ph {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font: 800 calc(78px * var(--ts, 1)) 'Bricolage Grotesque', sans-serif;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.tile .shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.55) 38%, transparent 62%);
+}
+
+.tile .shade::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.3s;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.78) 55%, rgba(0, 0, 0, 0.25) 85%, transparent);
+}
+
+.tile:hover .shade::after,
+.tile:focus-visible .shade::after ,
+.tile:has(:focus-visible) .shade::after {
+  opacity: 1;
+}
+
+.tile .info {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: calc(14px * var(--ts, 1));
+}
+
+.tile .name {
+  font: 700 calc(17px * var(--ts, 1))/1.2 'Bricolage Grotesque', sans-serif;
+  margin: 0 0 3px;
+}
+
+.tile .meta {
+  font-size: calc(12px * var(--ts, 1));
+  opacity: 0.85;
+}
+
+.tile .desc {
+  font-size: calc(12.5px * var(--ts, 1));
+  line-height: 1.4;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  transition: max-height 0.35s ease, opacity 0.25s ease, margin 0.3s ease;
+}
+
+.tile:hover .desc,
+.tile:focus-visible .desc ,
+.tile:has(:focus-visible) .desc {
+  max-height: 6em;
+  opacity: 0.9;
+  margin-top: 6px;
+}
+
+/* Quick Actions: Ratings & Progress */
+.tile .qa {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.tile .stars {
+  display: flex;
+  color: #e6e6e6;
+  font-size: calc(15px * var(--ts, 1));
+  line-height: 1;
+  max-height: 24px;
+  overflow: hidden;
+  transition: max-height 0.25s, opacity 0.25s;
+}
+
+.tile .stars.none {
+  max-height: 0;
+  opacity: 0;
+}
+
+.tile:hover .stars.none,
+.tile:focus-visible .stars.none ,
+.tile:has(:focus-visible) .stars.none {
+  max-height: 24px;
+  opacity: 0.8;
+}
+
+.tile .stars b {
+  font-weight: 400;
+  cursor: pointer;
+  padding: 3px 1px;
+  transition: transform 0.12s;
+}
+
+.tile .stars b:hover {
+  transform: scale(1.35);
+}
+
+.tile .stars.pop {
+  animation: pop 0.3s;
+}
+
+.tile .pct {
+  font-size: calc(11px * var(--ts, 1));
+  opacity: 0;
+  transition: opacity 0.2s;
+  font-variant-numeric: tabular-nums;
+}
+
+.tile:hover .pct {
+  opacity: 0.85;
+}
+
+.tile .bar2 {
+  height: 4px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.25);
+  margin-top: 8px;
+  overflow: hidden;
+  opacity: 0;
+  cursor: ew-resize;
+  transition: height 0.2s, opacity 0.2s;
+}
+
+.tile .bar2.on,
+.tile:hover .bar2,
+.tile:focus-visible .bar2 ,
+.tile:has(:focus-visible) .bar2 {
+  opacity: 1;
+}
+
+.tile:hover .bar2 {
+  height: 10px;
+}
+
+.tile .bar2 i {
+  display: block;
+  height: 100%;
+  background: var(--tc);
+  transition: width 0.15s;
+}
+
+/* Big Tiles */
+.tile.big .name {
+  font-size: calc(28px * var(--ts, 1));
+}
+
+.tile.big .meta,
+.tile.big .desc {
+  font-size: calc(15px * var(--ts, 1));
+}
+
+.tile.big .ph {
+  font-size: calc(170px * var(--ts, 1));
+}
+
+.tile.big .info {
+  padding: 22px;
+}
+
+/* Drag & Drop Reordering */
+.customsort .tile {
+  cursor: grab;
+}
+
+.tile.held {
+  --ly: -8px;
+  --sc: 1.07;
+  z-index: 50;
+  cursor: grabbing;
+  box-shadow: 0 28px 60px rgba(0, 0, 0, 0.5);
+  transition: transform 0.15s ease-out, box-shadow 0.2s;
+}
+
+.tile.drop {
+  outline: 3px dashed var(--accent);
+  outline-offset: -3px;
+}
+
+.gap {
+  border-radius: calc(14px * var(--ts, 1));
+  border: 2px dashed transparent;
+  transition: border-color 0.2s, background 0.2s, translate 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+  position: relative;
+  z-index: 0;
+  pointer-events: none;
+}
+
+body.dragging .gap {
+  border-color: color-mix(in srgb, var(--ink) 38%, transparent);
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+}
+
+.gap.drop {
+  border-color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 8%, transparent);
+}
+
+/* Selection Mode */
+body.selecting .tile .stars b,
+body.selecting .tile .bar2 {
+  pointer-events: none;
+}
+
+body.selecting main {
+  padding-bottom: 150px;
+}
+
+.tile .chk {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--accent-ink);
+  display: grid;
+  place-items: center;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.tile.sel .chk {
+  background: var(--accent);
+}
+
+.tile.sel {
+  outline: 3px solid var(--accent);
+  outline-offset: -3px;
+}
+
+#selbar {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 10px 12px;
+  box-shadow: var(--shadow);
+  width: max-content;
+  max-width: 94vw;
+  z-index: 5;
+}
+
+#selbar[hidden],
+#selbar select[hidden] {
+  display: none;
+}
+
+#selbar select {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 7px 10px;
+}
+
+#selcount {
+  font-weight: 600;
+  margin-right: 4px;
+}
+

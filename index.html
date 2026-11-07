@@ -8,8 +8,8 @@
   <!-- Google Fonts -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap">
   
-  <!-- External Stylesheet -->
-  <link rel="stylesheet" href="style.css">
+  <!-- Stylesheets (styles/main.css imports one file per area) -->
+  <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
   <!-- Custom App Backgrounds (stacked layers that crossfade as you scroll) -->
@@ -29,6 +29,7 @@
         <button class="btn" id="catbtn">Categories</button>
         <button class="btn" id="exp">Export</button>
         <button class="btn" id="imp">Import</button>
+        <button class="btn" id="datadir" hidden>Data folder</button>
         <button class="btn" id="testbtn">Add test tiles</button>
       </div>
       <button class="btn" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="tray">
@@ -211,6 +212,6 @@
   <div class="toast" id="toast" role="status" hidden></div>
 
   <!-- Application Script -->
-  <script src="app.js"></script>
+  <script type="module" src="src/main.js"></script>
 </body>
 </html>

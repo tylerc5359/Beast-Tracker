@@ -1,0 +1,15 @@
+/* ==========================================================================
+   Beast Media Tracker styles
+   One file per area. They are imported in the same order as the old single
+   style.css, because later rules override earlier ones.
+   ========================================================================== */
+@import url('base.css');
+@import url('tiles.css');
+@import url('dialogs.css');
+@import url('backgrounds.css');
+@import url('size-picker.css');
+@import url('animations.css');
+@import url('responsive.css');
+@import url('edit-mode.css');
+@import url('cover-editor.css');
+@import url('basic-tile.css');

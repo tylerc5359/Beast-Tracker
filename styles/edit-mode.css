@@ -1,0 +1,76 @@
+/* ==========================================================================
+   Edit mode: "+" cells, hint text, locked sizes
+   ========================================================================== */
+.addcell {
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 2px dashed color-mix(in srgb, var(--ink) 38%, transparent);
+  border-radius: calc(14px * var(--ts, 1));
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+  color: var(--mute);
+  font-size: calc(36px * var(--ts, 1));
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
+}
+
+.addcell:hover,
+.addcell:focus-visible {
+  border-color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 12%, transparent);
+  color: var(--ink);
+  transform: scale(1.02);
+}
+
+/* An image file is being dragged over an empty slot */
+.addcell.dropping {
+  border-color: var(--accent);
+  border-style: solid;
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  color: var(--ink);
+  transform: scale(1.04);
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  z-index: 60;
+  max-width: min(520px, 92vw);
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: var(--ink);
+  color: var(--bg);
+  font-size: 14px;
+  box-shadow: var(--shadow);
+}
+
+.toast[hidden] {
+  display: none;
+}
+
+/* While a tile is being dragged the drag guides take over */
+body.dragging .addcell {
+  visibility: hidden;
+}
+
+.hint {
+  color: var(--mute);
+  font-size: 13px;
+}
+
+.sizecell.locked {
+  opacity: 0.45;
+  cursor: not-allowed;
+  /* diagonal hatch = "doesn't fit here" */
+  background-image: repeating-linear-gradient(45deg, transparent 0 3px, color-mix(in srgb, var(--ink) 22%, transparent) 3px 4px);
+}
+
+

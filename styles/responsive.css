@@ -1,0 +1,51 @@
+/* ==========================================================================
+   Responsive Breakpoints & Accessibility
+   ========================================================================== */
+@media (max-width: 760px) {
+  .tray {
+    right: 0;
+    top: calc(100% + 8px);
+    transform: none;
+    background: var(--surface);
+    border: 1px solid var(--line);
+  }
+
+  .tray.open {
+    flex-wrap: wrap;
+    max-width: min(92vw, 420px);
+    padding: 10px;
+  }
+}
+
+@media (max-width: 620px) {
+  form {
+    grid-template-columns: 1fr;
+  }
+
+  .side {
+    grid-template-columns: 140px 1fr;
+    align-items: end;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  header,
+  .tray,
+  .tray .btn,
+  .tile,
+  .desc,
+  .tile .art,
+  .tile .stars {
+    transition: none;
+  }
+
+  .tile.in,
+  .tile .stars.pop {
+    animation: none;
+  }
+
+  .tile {
+    transform: none !important;
+  }
+}
+

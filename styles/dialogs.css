@@ -1,0 +1,109 @@
+/* ==========================================================================
+   Dialogs & Forms
+   ========================================================================== */
+dialog {
+  border: 0;
+  border-radius: 18px;
+  background: var(--surface);
+  color: var(--ink);
+  padding: 0;
+  width: min(720px, 94vw);
+  box-shadow: var(--shadow);
+  max-height: 92vh;
+}
+
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+#cdlg {
+  width: min(460px, 94vw);
+}
+
+#sdlg {
+  width: min(720px, 94vw);
+}
+
+form {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 22px;
+  padding: 24px;
+}
+
+.cover {
+  position: relative;
+  overflow: hidden;
+  container-type: size;
+  aspect-ratio: 2/3;
+  border-radius: 12px;
+  background: var(--bg);
+  background-size: cover;
+  background-position: center;
+  display: grid;
+  place-items: center;
+  color: var(--mute);
+  font-size: 13px;
+  text-align: center;
+  border: 1px dashed var(--line);
+}
+
+.side {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  grid-template-columns: minmax(0, 1fr); /* keeps the cover preview inside its 200px column */
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.fields .full {
+  grid-column: 1 / -1;
+}
+
+.fields label {
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--mute);
+}
+
+.fields input,
+.fields select,
+.fields textarea,
+#sdlg input,
+#sdlg select,
+#cdlg input {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 8px 10px;
+  color: var(--ink);
+}
+
+.fields input[type="color"] {
+  padding: 2px;
+  height: 38px;
+  width: 100%;
+}
+
+.fields textarea {
+  min-height: 86px;
+  resize: vertical;
+}
+
+.actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.actions .danger {
+  margin-right: auto;
+}
+

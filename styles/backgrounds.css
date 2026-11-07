@@ -1,0 +1,175 @@
+/* ==========================================================================
+   Custom Backgrounds
+   ========================================================================== */
+.bgstack {
+  position: fixed;
+  inset: -50px; /* extends past the screen so blurred edges never show */
+  z-index: -1;
+  pointer-events: none;
+}
+
+.bglayer {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  will-change: opacity;
+  transition: opacity 0.45s ease-out, visibility 0s;
+}
+
+/* Layers that have fully faded out are hidden once the fade finishes */
+.bglayer[data-off] {
+  visibility: hidden;
+  transition: opacity 0.45s ease-out, visibility 0s 0.45s;
+}
+
+/* Let the background show through the header and chips */
+.has-bg header {
+  background: color-mix(in srgb, var(--bg) 60%, transparent);
+  backdrop-filter: blur(14px);
+}
+
+.has-bg .chip:not([aria-pressed="true"]) {
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+}
+
+.covermsg {
+  color: var(--mute);
+  font-size: 12px;
+}
+
+.covermsg:empty {
+  display: none;
+}
+
+#bgdlg {
+  position: fixed;
+  inset: auto 20px 20px auto;
+  margin: 0;
+  width: min(360px, calc(100vw - 40px));
+  max-height: calc(100vh - 140px); /* stays below the header so Edit/Done is always clickable */
+  overflow: auto;
+  z-index: 30;
+}
+
+.bgpanel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr); /* lets long text wrap instead of widening the panel */
+  gap: 12px;
+  padding: 18px;
+}
+
+.bgpanel p {
+  margin: 0;
+}
+
+.bgtitle {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.bgtitle h2 {
+  margin: 0;
+}
+
+.bgtitle b {
+  color: var(--ink);
+}
+
+.bglist {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+}
+
+.bgcard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.bghead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bghead strong {
+  margin-right: auto;
+  white-space: nowrap;
+}
+
+.bgthumb {
+  width: 56px;
+  aspect-ratio: 16 / 10;
+  flex: none;
+  border-radius: 6px;
+  background: var(--bg) center / cover no-repeat;
+}
+
+.bgcard .btn {
+  padding: 4px 10px;
+  font-size: 13px;
+}
+
+.bgcard label {
+  display: grid;
+  gap: 2px;
+  font-size: 13px;
+  color: var(--mute);
+}
+
+.bgl {
+  display: flex;
+  justify-content: space-between;
+}
+
+.bgl b {
+  color: var(--ink);
+}
+
+.bgrange {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.bgrange input {
+  flex: 1;
+  min-width: 0;
+}
+
+.bgrange input[type="number"] {
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.bgcard input[type="range"] {
+  accent-color: var(--accent);
+}
+
+.bgcard details {
+  font-size: 13px;
+  color: var(--mute);
+}
+
+.bgcard summary {
+  cursor: pointer;
+  margin-bottom: 6px;
+}
+
+.bgrow {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+}
+
