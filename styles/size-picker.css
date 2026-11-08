@@ -72,3 +72,45 @@
   display: none;
 }
 
+
+/* Rectangle / Custom shape switch above the squares */
+.sizemodes {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.sizemode {
+  flex: 1;
+  padding: 4px 8px;
+  font: inherit;
+  font-size: 12px;
+  color: var(--mute);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.sizemode.on {
+  color: var(--ink);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+/* Custom shape: squares toggle on and off, so no rectangle preview */
+.sizegrid.shape {
+  touch-action: none;
+  user-select: none;
+}
+
+.sizehint {
+  min-height: 1.3em;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--mute);
+}
+
+.sizehint.bad {
+  color: #d9534f;
+}

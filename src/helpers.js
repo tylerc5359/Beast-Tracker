@@ -10,10 +10,17 @@ export const subName = (c, s) => {
   return ((parent && parent.subs.find((y) => y.id === s)) || {}).name || '';
 };
 
+// { c, r } columns and rows of the tile's box, plus cells ([x, y] squares) for a custom shape
 export function sizeOf(key) {
   if (SIZE_SPECIAL[key]) return SIZE_SPECIAL[key];
-  const m = /^(\d+)x(\d+)$/.exec(key || '');
-  return m ? { c: Math.max(1, +m[1]), r: Math.max(1, +m[2]) } : { c: 1, r: 1 };
+  const m = /^(\d+)x(\d+)(?::([01]+))?$/.exec(key || '');
+  if (!m) return { c: 1, r: 1 };
+  const z = { c: Math.max(1, +m[1]), r: Math.max(1, +m[2]) };
+  if (m[3] && m[3].length === z.c * z.r && m[3].includes('1')) {
+    z.cells = [];
+    [...m[3]].forEach((bit, n) => bit === '1' && z.cells.push([n % z.c, Math.floor(n / z.c)]));
+  }
+  return z;
 }
 
 export function viewKey() {

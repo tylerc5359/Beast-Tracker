@@ -56,7 +56,7 @@ export function startDrag(e, b) {
     return [cx - r.left, cy - r.top];
   };
 
-  const area = (k) => sizes.get(k).w * sizes.get(k).h;
+  const area = (k) => sizes.get(k).cells.length;
 
   const ensure = (n) => {
     while (gr < n) {
@@ -76,29 +76,25 @@ export function startDrag(e, b) {
     const out = new Map();
     const occ = new Map();
     const vic = [];
-    const held = group.map((k) => {
+    const heldOcc = new Map(); // the squares the dragged tiles cover at T
+    group.forEach((k) => {
       const d = off.get(k);
-      return [k, [T[0] + d[0], T[1] + d[1]], sizes.get(k)];
+      const q = [T[0] + d[0], T[1] + d[1]];
+      mark(heldOcc, q[0], q[1], sizes.get(k), k);
+      out.set(k, q);
     });
 
     base.forEach((p, k) => {
       if (inGroup.has(k)) return;
       const s = sizes.get(k);
-      const hit = held.some(
-        ([, q, H]) => p[0] < q[0] + H.w && p[0] + s.w > q[0] && p[1] < q[1] + H.h && p[1] + s.h > q[1]
-      );
-      if (hit) {
+      if (s.cells.some(([x, y]) => heldOcc.has(`${p[0] + x},${p[1] + y}`))) {
         vic.push(k);
       } else {
-        mark(occ, p[0], p[1], s.w, s.h, k);
+        mark(occ, p[0], p[1], s, k);
         out.set(k, p);
       }
     });
-
-    held.forEach(([k, q, H]) => {
-      mark(occ, q[0], q[1], H.w, H.h, k);
-      out.set(k, q);
-    });
+    heldOcc.forEach((v, key) => occ.set(key, v));
 
     let mr = 0;
     base.forEach((p, k) => {
@@ -126,17 +122,14 @@ export function startDrag(e, b) {
           const bl = new Set();
           let ok = true;
 
-          for (let y = r; y < r + s.h && ok; y++) {
-            for (let x = c; x < c + s.w; x++) {
-              const v = occ.get(`${x},${y}`);
-              if (v !== undefined) {
-                if (fixed.has(v) || area(v) >= area(k)) {
-                  ok = false;
-                  break;
-                }
-                bl.add(v);
-              }
+          for (const [x, y] of s.cells) {
+            const v = occ.get(`${c + x},${r + y}`);
+            if (v === undefined) continue;
+            if (fixed.has(v) || area(v) >= area(k)) {
+              ok = false;
+              break;
             }
+            bl.add(v);
           }
 
           if (ok && d + bl.size * 2 < bc) {
@@ -148,13 +141,12 @@ export function startDrag(e, b) {
 
       const [c, r, bl] = best;
       bl.forEach((v) => {
-        const vs = sizes.get(v);
         const vp = out.get(v);
-        unmark(occ, vp[0], vp[1], vs.w, vs.h);
+        unmark(occ, vp[0], vp[1], sizes.get(v));
         q.push(v);
       });
 
-      mark(occ, c, r, s.w, s.h, k);
+      mark(occ, c, r, s, k);
       out.set(k, [c, r]);
       fixed.add(k);
     }
@@ -231,14 +223,11 @@ export function startDrag(e, b) {
 
     guides.forEach((d) => d.classList.remove('drop'));
     group.forEach((k) => {
-      const H = sizes.get(k);
       const q = out.get(k);
-      for (let y = q[1]; y < q[1] + H.h; y++) {
-        for (let x = q[0]; x < q[0] + H.w; x++) {
-          const d = guides.get(`${x},${y}`);
-          if (d) d.classList.add('drop');
-        }
-      }
+      sizes.get(k).cells.forEach(([x, y]) => {
+        const d = guides.get(`${q[0] + x},${q[1] + y}`);
+        if (d) d.classList.add('drop');
+      });
     });
   };
 

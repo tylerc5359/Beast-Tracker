@@ -7,10 +7,30 @@ import { save } from './storage.js';
 import { sel, state } from './state.js';
 import { openDlg } from './tile-editor.js';
 import { startDrag } from './drag.js';
+import { clipFor, roundClipFor, rowSpan } from './shape.js';
 import { renderAddCells, toggle } from './edit-mode.js';
+
+// Shaped tiles get their rounded outline once their size is known, and again whenever it changes
+function roundShape(el) {
+  const { cells, w, h } = el._shape;
+  if (!el.offsetWidth) return;
+  const cs = getComputedStyle($('grid'));
+  el.style.clipPath = roundClipFor(
+    cells,
+    w,
+    h,
+    el.offsetWidth,
+    el.offsetHeight,
+    parseFloat(cs.columnGap) || 0,
+    parseFloat(cs.rowGap) || 0,
+    parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0 // the same curve as a normal tile's corners
+  );
+}
+const shapeWatch = new ResizeObserver((list) => list.forEach((e) => roundShape(e.target)));
 
 export function render() {
   measure();
+  shapeWatch.disconnect(); // the old tiles are about to be replaced
   const q = $('q').value.toLowerCase();
   const s = $('sort').value;
 
@@ -74,6 +94,15 @@ export function render() {
     b.style.gridColumn = sz.c === 'all' ? '1/-1' : `span ${Math.min(sz.c, state.gridCols)}`;
     b.style.gridRow = `span ${sz.r === 'page' ? state.pageRows : sz.r}`;
     if (sz.c === 'all' || (sz.c >= 2 && sz.r >= 2)) b.classList.add('big');
+
+    // Custom shape: cut the box down to its squares
+    const shape = fp(i);
+    if (shape.shaped) {
+      b.classList.add('shaped');
+      b.style.clipPath = clipFor(shape.cells, shape.w, shape.h); // sharp-cornered until measured
+      b._shape = shape;
+      shapeWatch.observe(b);
+    }
 
     if (!i.basic) b.style.background = `linear-gradient(155deg, ${i.color}, #1a1a1a)`; // basic tiles: no gradient
 
@@ -185,6 +214,7 @@ export function render() {
 
       paint();
       inf.append(qa, bar);
+      if (shape.shaped) Object.assign(inf.style, rowSpan(shape.cells, shape.w, shape.h - 1)); // text on the bottom row
       b.append(inf);
     } else {
       if (i.title.trim()) {
@@ -201,6 +231,7 @@ export function render() {
       const ck = document.createElement('div');
       ck.className = 'chk';
       ck.textContent = sel.has(i.id) ? '✓' : '';
+      if (shape.shaped) ck.style.right = `calc(${rowSpan(shape.cells, shape.w, 0).right} + 10px)`; // on the top row
       b.append(ck);
       b.classList.toggle('sel', sel.has(i.id));
       b.setAttribute('aria-pressed', sel.has(i.id));

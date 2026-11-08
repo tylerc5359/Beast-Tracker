@@ -5,6 +5,7 @@ import { sizeOf } from './helpers.js';
 import { aspectOf, clamp, dataUrlToBlob, round1 } from './utils.js';
 import { MAX_TEXT } from './config.js';
 import { state } from './state.js';
+import { roundClipFor } from './shape.js';
 
 export function setCover(c, keepFrame = false) {
   state.cover = c;
@@ -103,9 +104,14 @@ function tileShape() {
   const rh = parseFloat(cs.gridAutoRows) || 285;
   const c = z.c === 'all' ? cols.length || 1 : Math.min(z.c, cols.length || 1);
   const r = z.r === 'page' ? state.pageRows : z.r;
+  const cells = z.cells && z.cells.filter(([x]) => x < c);
   return {
     w: c * cw + (c - 1) * gap,
     h: r * rh + (r - 1) * gap,
+    c,
+    r,
+    gap,
+    cells: cells && cells.length && cells.length < c * r ? cells : null, // custom shape squares
     ts: parseFloat(cs.getPropertyValue('--ts')) || 1 // the text scale every tile uses
   };
 }
@@ -116,6 +122,13 @@ export function paintCover() {
   const t = tileShape();
   $('cv').style.aspectRatio = clamp(t.w / t.h, 0.5, 2.2);
   $('cv').style.setProperty('--pv', ((t.ts * $('cv').clientWidth) / t.w).toFixed(4));
+  // Custom shape: cut the preview the same way (the gap scaled down like everything else)
+  const cv = $('cv');
+  const k = cv.offsetWidth / t.w;
+  cv.style.clipPath =
+    t.cells && cv.offsetWidth
+      ? roundClipFor(t.cells, t.c, t.r, cv.offsetWidth, cv.offsetHeight, t.gap * k, t.gap * k, parseFloat(getComputedStyle(cv).borderTopLeftRadius) || 0)
+      : '';
   artStyle($('cvart'), state.cover, state.frame);
   $('cvart').style.cursor = has ? 'grab' : 'default';
   $('cvempty').hidden = has;

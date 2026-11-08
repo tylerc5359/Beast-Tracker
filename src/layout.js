@@ -3,44 +3,37 @@ import { customSorted, inView, sizeOf, viewKey } from './helpers.js';
 import { $ } from './dom.js';
 import { state } from './state.js';
 
+// A tile's footprint: its box (w x h squares) and the squares it covers inside it ([x, y] each).
+// shaped = a custom shape rather than the whole box.
 export const fp = (i) => {
   const z = sizeOf(i.size);
-  return {
-    w: z.c === 'all' ? state.gridCols : Math.min(z.c, state.gridCols),
-    h: z.r === 'page' ? state.pageRows : z.r
-  };
-};
-
-export const freeAt = (occ, c, r, w, h) => {
-  if (c < 0 || c + w > state.gridCols) return false;
-  for (let y = r; y < r + h; y++) {
-    for (let x = c; x < c + w; x++) {
-      if (occ.has(`${x},${y}`)) return false;
-    }
+  const w = z.c === 'all' ? state.gridCols : Math.min(z.c, state.gridCols);
+  const h = z.r === 'page' ? state.pageRows : z.r;
+  let cells = z.cells && z.cells.filter(([x]) => x < w); // a narrow window cuts off the right side
+  const shaped = !!cells && cells.length > 0 && cells.length < w * h;
+  if (!shaped) {
+    cells = [];
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) cells.push([x, y]);
   }
-  return true;
+  return { w, h, cells, shaped };
 };
 
-export const mark = (occ, c, r, w, h, id) => {
-  for (let y = r; y < r + h; y++) {
-    for (let x = c; x < c + w; x++) {
-      occ.set(`${x},${y}`, id);
-    }
-  }
+// Can footprint f sit with its box's top-left square at column c, row r?
+export const freeAt = (occ, c, r, f) =>
+  c >= 0 && c + f.w <= state.gridCols && f.cells.every(([x, y]) => !occ.has(`${c + x},${r + y}`));
+
+export const mark = (occ, c, r, f, id) => {
+  f.cells.forEach(([x, y]) => occ.set(`${c + x},${r + y}`, id));
 };
 
-export const unmark = (occ, c, r, w, h) => {
-  for (let y = r; y < r + h; y++) {
-    for (let x = c; x < c + w; x++) {
-      occ.delete(`${x},${y}`);
-    }
-  }
+export const unmark = (occ, c, r, f) => {
+  f.cells.forEach(([x, y]) => occ.delete(`${c + x},${r + y}`));
 };
 
-function firstFit(occ, w, h, r0) {
+function firstFit(occ, f, r0) {
   for (let r = r0; ; r++) {
-    for (let c = 0; c <= state.gridCols - w; c++) {
-      if (freeAt(occ, c, r, w, h)) return [c, r];
+    for (let c = 0; c <= state.gridCols - f.w; c++) {
+      if (freeAt(occ, c, r, f)) return [c, r];
     }
   }
 }
@@ -54,11 +47,11 @@ export function computeLayout(list) {
     .filter((i) => L[i.id])
     .sort((a, b) => L[a.id][1] - L[b.id][1] || L[a.id][0] - L[b.id][0])
     .forEach((i) => {
-      const { w, h } = fp(i);
-      let c = Math.max(0, Math.min(L[i.id][0], state.gridCols - w));
+      const f = fp(i);
+      let c = Math.max(0, Math.min(L[i.id][0], state.gridCols - f.w));
       let r = L[i.id][1];
-      if (!freeAt(occ, c, r, w, h)) [c, r] = firstFit(occ, w, h, r);
-      mark(occ, c, r, w, h, i.id);
+      if (!freeAt(occ, c, r, f)) [c, r] = firstFit(occ, f, r);
+      mark(occ, c, r, f, i.id);
       pos.set(i.id, [c, r]);
     });
 
@@ -68,9 +61,9 @@ export function computeLayout(list) {
   });
 
   customSorted(list.filter((i) => !L[i.id])).forEach((i) => {
-    const { w, h } = fp(i);
-    const [c, r] = firstFit(occ, w, h, row);
-    mark(occ, c, r, w, h, i.id);
+    const f = fp(i);
+    const [c, r] = firstFit(occ, f, row);
+    mark(occ, c, r, f, i.id);
     pos.set(i.id, [c, r]);
   });
 

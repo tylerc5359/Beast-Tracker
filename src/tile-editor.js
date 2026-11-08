@@ -2,7 +2,7 @@
 import { $, fill } from './dom.js';
 import { frameOf, paintCover, setCover } from './cover-editor.js';
 import { findLink } from './cover-art.js';
-import { lockSizesForSpot, setTileSize } from './size-picker.js';
+import { lockSizesForSpot, setTileSize, sizeShift } from './size-picker.js';
 import { pinCurrentLayout } from './layout.js';
 import { clamp } from './utils.js';
 import { save, saveLayouts } from './storage.js';
@@ -102,13 +102,24 @@ export function initTileEditor() {
       nameS: state.frame.ns
     };
 
+    // A custom shape drawn away from the picker's top-left corner moves the tile's box by that much,
+    // so the shape lands on the squares it was drawn on
+    const [dx, dy] = sizeShift();
+    const custom = $('sort').value === 'custom';
+
     if (state.editing) {
+      if (custom && (dx || dy)) {
+        const { L } = pinCurrentLayout();
+        const p = L[state.editing.id];
+        if (p) L[state.editing.id] = [p[0] + dx, p[1] + dy];
+        saveLayouts();
+      }
       Object.assign(state.editing, d);
     } else {
       const id = Date.now();
       if (state.addAnchor) {
         const { L } = pinCurrentLayout();
-        L[id] = state.addAnchor;
+        L[id] = [state.addAnchor[0] + dx, state.addAnchor[1] + dy];
         saveLayouts();
       }
       state.items.push({ id, t: id, ...d });

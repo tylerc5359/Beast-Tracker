@@ -52,7 +52,8 @@ Click any tile to open it again and change it.
 **Arranging your shelf**
 - In **Edit** mode, drag tiles anywhere. Other tiles move out of the way.
 - Use the bottom bar in **Edit** mode (**Select** / **Select all**) to move, resize or delete many tiles at once.
-- Make a tile bigger or smaller with the **Tile size** grid when editing it.
+- Make a tile bigger or smaller with the **Tile size** grid when editing it. Switch to **Custom shape** to click or
+  drag over squares and make L, T or any other shape (the squares must touch, with no holes).
 - Drop image files from your computer onto empty spots to make picture tiles in one go.
 - Turn on **Basic image tile** for a tile that shows only a picture and a title.
 
