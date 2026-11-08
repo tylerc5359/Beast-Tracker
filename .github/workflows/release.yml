@@ -1,10 +1,15 @@
 # Builds the Windows and Mac installers on GitHub's machines and attaches them to a release.
-# Runs whenever a version tag like v1.2.0 is pushed.
+# Runs whenever a version tag like v1.2.0 is pushed, or by hand from the Actions tab ("Run workflow").
 name: Release
 
 on:
   push:
     tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Version tag to build and release (for example v1.1.0)
+        required: true
 
 permissions:
   contents: write
@@ -23,6 +28,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
 
       - uses: actions/setup-node@v4
         with:
@@ -37,7 +44,8 @@ jobs:
       - name: Attach to release
         uses: softprops/action-gh-release@v2
         with:
-          name: Beast Media Tracker ${{ github.ref_name }}
+          tag_name: ${{ inputs.tag || github.ref_name }}
+          name: Beast Media Tracker ${{ inputs.tag || github.ref_name }}
           body: |
             **Windows:** download `Beast-Media-Tracker-Setup-….exe` and run it.
             **Mac:** download `Beast-Media-Tracker-…-mac.dmg`, open it and drag the app into Applications.
