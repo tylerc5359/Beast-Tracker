@@ -1,10 +1,11 @@
 // Drag a tile to move it (Edit mode): guides, snapping and dropping.
+// While selecting, dragging a selected tile moves every selected tile together, keeping their arrangement.
 import { $ } from './dom.js';
 import { fp, mark, unmark } from './layout.js';
 import { viewKey } from './helpers.js';
 import { saveLayouts } from './storage.js';
 import { renderAddCells } from './edit-mode.js';
-import { state } from './state.js';
+import { sel, state } from './state.js';
 
 export function startDrag(e, b) {
   if (e.button !== 0 || e.pointerType === 'touch' || e.target.closest('.stars b, .bar2')) return;
@@ -36,6 +37,11 @@ export function startDrag(e, b) {
   let curPos = base;
   let gr = 0;
   let lim = 0;
+  let group = [id]; // the tiles that move together; the grabbed tile is the anchor
+  let inGroup = new Set(group);
+  const off = new Map(); // each group tile's cell offset from the anchor
+  const shift = new Map(); // each group tile's pixel offset from the anchor
+  let span = { l: 0, r: 1, t: 0, b: 1 }; // the group's extent in cells, relative to the anchor
 
   const tl = () => [...g.querySelectorAll('.tile')];
   const tr = (o) => {
@@ -69,13 +75,19 @@ export function startDrag(e, b) {
   const resolve = (T) => {
     const out = new Map();
     const occ = new Map();
-    const H = sizes.get(id);
     const vic = [];
+    const held = group.map((k) => {
+      const d = off.get(k);
+      return [k, [T[0] + d[0], T[1] + d[1]], sizes.get(k)];
+    });
 
     base.forEach((p, k) => {
-      if (k === id) return;
+      if (inGroup.has(k)) return;
       const s = sizes.get(k);
-      if (p[0] < T[0] + H.w && p[0] + s.w > T[0] && p[1] < T[1] + H.h && p[1] + s.h > T[1]) {
+      const hit = held.some(
+        ([, q, H]) => p[0] < q[0] + H.w && p[0] + s.w > q[0] && p[1] < q[1] + H.h && p[1] + s.h > q[1]
+      );
+      if (hit) {
         vic.push(k);
       } else {
         mark(occ, p[0], p[1], s.w, s.h, k);
@@ -83,16 +95,18 @@ export function startDrag(e, b) {
       }
     });
 
-    mark(occ, T[0], T[1], H.w, H.h, id);
-    out.set(id, T);
+    held.forEach(([k, q, H]) => {
+      mark(occ, q[0], q[1], H.w, H.h, k);
+      out.set(k, q);
+    });
 
     let mr = 0;
     base.forEach((p, k) => {
       mr = Math.max(mr, p[1] + sizes.get(k).h);
     });
-    mr += H.h + 4;
+    mr += span.b - span.t + 4;
 
-    const fixed = new Set([id]);
+    const fixed = new Set(group);
     const q = vic.slice();
 
     while (q.length) {
@@ -148,7 +162,7 @@ export function startDrag(e, b) {
   };
 
   const flip = (out) => {
-    const els = tl().filter((o) => o !== b);
+    const els = tl().filter((o) => !inGroup.has(o._id));
     const first = new Map(
       els.map((o) => {
         const c = tr(o);
@@ -180,22 +194,28 @@ export function startDrag(e, b) {
 
   const follow = () => {
     const [px, py] = mp();
-    b.style.translate = `${px - gx - b.offsetLeft}px ${py - gy - b.offsetTop}px`;
+    group.forEach((k) => {
+      const o = elOf.get(k);
+      const d = shift.get(k);
+      o.style.translate = `${px - gx + d[0] - o.offsetLeft}px ${py - gy + d[1] - o.offsetTop}px`;
+    });
   };
 
   const place = () => {
     follow();
     const [px, py] = mp();
-    const H = sizes.get(id);
     const hc = Math.max(0, Math.floor((px - pl) / pX));
     const hr = Math.max(0, Math.floor((py - pt) / pY));
-    const T = [Math.max(0, Math.min(hc - oc, state.gridCols - H.w)), Math.min(lim, Math.max(0, hr - orr))];
+    const T = [
+      Math.max(-span.l, Math.min(hc - oc, state.gridCols - span.r)),
+      Math.min(lim, Math.max(-span.t, hr - orr))
+    ];
     const key = T.join();
 
     if (key === applied) return;
 
     const out = resolve(T);
-    const moved = [...out].some(([k, p]) => k !== id && (base.get(k)[0] !== p[0] || base.get(k)[1] !== p[1]));
+    const moved = [...out].some(([k, p]) => !inGroup.has(k) && (base.get(k)[0] !== p[0] || base.get(k)[1] !== p[1]));
     const now = performance.now();
 
     if (moved) {
@@ -210,12 +230,16 @@ export function startDrag(e, b) {
     follow();
 
     guides.forEach((d) => d.classList.remove('drop'));
-    for (let y = T[1]; y < T[1] + H.h; y++) {
-      for (let x = T[0]; x < T[0] + H.w; x++) {
-        const d = guides.get(`${x},${y}`);
-        if (d) d.classList.add('drop');
+    group.forEach((k) => {
+      const H = sizes.get(k);
+      const q = out.get(k);
+      for (let y = q[1]; y < q[1] + H.h; y++) {
+        for (let x = q[0]; x < q[0] + H.w; x++) {
+          const d = guides.get(`${x},${y}`);
+          if (d) d.classList.add('drop');
+        }
       }
-    }
+    });
   };
 
   const loop = () => {
@@ -262,10 +286,26 @@ export function startDrag(e, b) {
     });
 
     P = base.get(id);
+    if (state.selMode && sel.has(id)) group = [id, ...[...sel].filter((k) => k !== id && base.has(k))];
+    inGroup = new Set(group);
+    span = { l: 0, r: 0, t: 0, b: 0 };
+    group.forEach((k) => {
+      const q = base.get(k);
+      const s = sizes.get(k);
+      const o = elOf.get(k);
+      const d = [q[0] - P[0], q[1] - P[1]];
+      off.set(k, d);
+      shift.set(k, [o.offsetLeft - b.offsetLeft, o.offsetTop - b.offsetTop]);
+      span.l = Math.min(span.l, d[0]);
+      span.r = Math.max(span.r, d[0] + s.w);
+      span.t = Math.min(span.t, d[1]);
+      span.b = Math.max(span.b, d[1] + s.h);
+    });
+
     applied = P.join();
     document.body.classList.add('dragging');
     lim = mr + 2;
-    ensure(lim + sizes.get(id).h);
+    ensure(lim + span.b);
 
     const [px, py] = mp();
     gx = px - b.offsetLeft;
@@ -273,8 +313,10 @@ export function startDrag(e, b) {
     oc = Math.min(sizes.get(id).w - 1, Math.max(0, Math.floor(gx / pX)));
     orr = Math.min(sizes.get(id).h - 1, Math.max(0, Math.floor(gy / pY)));
 
-    b.classList.remove('in');
-    b.classList.add('held');
+    group.forEach((k) => {
+      elOf.get(k).classList.remove('in');
+      elOf.get(k).classList.add('held');
+    });
     loop();
   };
 
@@ -316,8 +358,10 @@ export function startDrag(e, b) {
     void g.offsetWidth;
     document.body.classList.remove('dragging');
     guides.forEach((d) => d.remove());
-    b.classList.remove('held');
-    b.style.translate = '0px 0px';
+    group.forEach((k) => {
+      elOf.get(k).classList.remove('held');
+      elOf.get(k).style.translate = '0px 0px';
+    });
   };
 
   b.setPointerCapture(e.pointerId);

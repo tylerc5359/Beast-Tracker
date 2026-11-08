@@ -33,7 +33,7 @@ export function render() {
   const lay = s === 'custom' ? computeLayout(list) : null;
   $('grid').classList.toggle('free', s === 'custom');
 
-  const canDrag = state.editMode && !state.selMode; // moving tiles only works in Edit mode
+  const canDrag = state.editMode; // moving tiles only works in Edit mode (selecting too)
   document.body.classList.toggle('customsort', canDrag);
   document.body.classList.toggle('editing', state.editMode);
 
