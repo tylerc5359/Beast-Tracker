@@ -64,8 +64,10 @@ export function toggle(id) {
 // Clicking one opens the add dialog for a tile whose top-left corner is that cell.
 export function renderAddCells() {
   const g = $('grid');
-  g.querySelectorAll('.addcell').forEach((el) => el.remove());
-  if (!state.editMode || state.selMode || $('sort').value !== 'custom') return;
+  if (!state.editMode || state.selMode || $('sort').value !== 'custom') {
+    g.querySelectorAll('.addcell').forEach((el) => el.remove());
+    return;
+  }
 
   const { occ } = computeLayout(state.items.filter(inView));
   let rows = 0;
@@ -74,12 +76,22 @@ export function renderAddCells() {
   });
   rows = Math.max(rows + 2, 3);
 
+  const existing = new Map();
+  g.querySelectorAll('.addcell').forEach((el) => {
+    existing.set(el.dataset.cell, el);
+  });
+
+  const keep = new Set();
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < state.gridCols; c++) {
-      if (occ.has(`${c},${r}`)) continue;
+      const key = `${c},${r}`;
+      if (occ.has(key)) continue;
+      keep.add(key);
+      if (existing.has(key)) continue;
       const cell = document.createElement('button');
       cell.type = 'button';
       cell.className = 'addcell';
+      cell.dataset.cell = key;
       cell.textContent = '+';
       cell.setAttribute('aria-label', `Add media at column ${c + 1}, row ${r + 1}`);
       cell.style.gridColumn = `${c + 1} / span 1`;
@@ -89,6 +101,10 @@ export function renderAddCells() {
       g.append(cell);
     }
   }
+
+  existing.forEach((el, key) => {
+    if (!keep.has(key)) el.remove();
+  });
 }
 
 // Edit mode on/off. Turning it on switches to Custom sort (the only sort with fixed cells).

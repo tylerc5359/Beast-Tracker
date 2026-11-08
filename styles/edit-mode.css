@@ -17,7 +17,7 @@
   font-weight: 300;
   line-height: 1;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
+  transition: color 0.22s ease;
 }
 
 .addcell:hover,
@@ -26,6 +26,7 @@
   background: color-mix(in srgb, var(--ink) 12%, transparent);
   color: var(--ink);
   transform: scale(1.02);
+  transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
 }
 
 /* An image file is being dragged over an empty slot */
@@ -35,6 +36,7 @@
   background: color-mix(in srgb, var(--accent) 22%, transparent);
   color: var(--ink);
   transform: scale(1.04);
+  transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
 }
 
 .toast {
@@ -56,9 +58,12 @@
   display: none;
 }
 
-/* While a tile is being dragged the drag guides take over */
+/* While a tile is being dragged the drag guides take over and the "+" fades out */
 body.dragging .addcell {
-  visibility: hidden;
+  border-color: transparent;
+  background: transparent;
+  color: transparent;
+  pointer-events: none;
 }
 
 .hint {

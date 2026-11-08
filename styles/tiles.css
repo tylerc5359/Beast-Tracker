@@ -254,7 +254,7 @@ main.free {
 .gap {
   border-radius: calc(14px * var(--ts, 1));
   border: 2px dashed transparent;
-  transition: border-color 0.2s, background 0.2s, translate 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: translate 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
   position: relative;
   z-index: 0;
   pointer-events: none;
@@ -268,6 +268,7 @@ body.dragging .gap {
 .gap.drop {
   border-color: var(--ink);
   background: color-mix(in srgb, var(--ink) 8%, transparent);
+  transition: border-color 0.2s, background 0.2s, translate 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 /* Selection in Edit Mode */
