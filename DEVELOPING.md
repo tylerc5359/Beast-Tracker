@@ -28,11 +28,14 @@ terminal as administrator, otherwise the build stops with a "symbolic link" erro
 Releases are built by GitHub Actions ([.github/workflows/release.yml](.github/workflows/release.yml)), which makes the
 Windows installer and the Mac app (Intel and Apple Silicon in one) on GitHub's machines.
 
-1. Bump `"version"` in `package.json` and commit.
+Versions follow the calendar: `YY.M.N`, so `26.11.0` is the first release of November 2026, `26.11.1` the second
+that month, and `27.1.0` the first of January 2027 (no leading zeros).
+
+1. Set `"version"` in `package.json` and commit.
 2. Tag and push:
    ```
-   git tag v1.2.0
-   git push origin main v1.2.0
+   git tag v26.12.0
+   git push origin main v26.12.0
    ```
 3. The release appears under Releases with both installers attached once the build finishes (about 10 minutes;
    progress is in the Actions tab).

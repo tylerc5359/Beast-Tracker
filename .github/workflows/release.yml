@@ -1,5 +1,5 @@
 # Builds the Windows and Mac installers on GitHub's machines and attaches them to a release.
-# Runs whenever a version tag like v1.2.0 is pushed, or by hand from the Actions tab ("Run workflow").
+# Runs whenever a version tag like v26.12.0 is pushed, or by hand from the Actions tab ("Run workflow").
 name: Release
 
 on:
@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: Version tag to build and release (for example v1.1.0)
+        description: Version tag to build and release (for example v26.11.0)
         required: true
 
 permissions:
