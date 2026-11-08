@@ -1,8 +1,9 @@
 // Developer helper: add / remove test tiles.
 import { $ } from './dom.js';
+import { updateBar } from './edit-mode.js';
 import { save } from './storage.js';
 import { render } from './render.js';
-import { state } from './state.js';
+import { sel, state } from './state.js';
 
 function testBtn() {
   $('testbtn').textContent = state.items.some((i) => i.test) ? 'Remove test tiles' : 'Add test tiles';
@@ -12,7 +13,11 @@ function testBtn() {
 export function initDevTools() {
   $('testbtn').onclick = () => {
     if (state.items.some((i) => i.test)) {
+      state.items.forEach((i) => {
+        if (i.test) sel.delete(i.id);
+      });
       state.items = state.items.filter((i) => !i.test);
+      if (state.editMode) updateBar();
     } else {
       const now = Date.now();
       const grays = ['#6b6b6b', '#7a7a7a', '#8a8a8a', '#9a9a9a', '#5e5e5e', '#b0b0b0'];

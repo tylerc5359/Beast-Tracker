@@ -301,7 +301,7 @@ export function startDrag(e, b) {
     }, 0);
 
     document.body.classList.remove('dragging');
-    guides.forEach((d) => d.classList.remove('drop'));
+    guides.forEach((d) => d.remove());
 
     const changed = [...curPos].some(([k, p]) => base.get(k)[0] !== p[0] || base.get(k)[1] !== p[1]);
     if (changed) {
@@ -318,7 +318,6 @@ export function startDrag(e, b) {
     renderAddCells(); // the cells the tile left are free again
     b.classList.remove('held');
     b.style.translate = '0px 0px';
-    setTimeout(() => guides.forEach((d) => d.remove()), 340);
   };
 
   b.setPointerCapture(e.pointerId);

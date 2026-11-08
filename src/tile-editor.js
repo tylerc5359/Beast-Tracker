@@ -6,8 +6,9 @@ import { lockSizesForSpot, setTileSize } from './size-picker.js';
 import { pinCurrentLayout } from './layout.js';
 import { clamp } from './utils.js';
 import { save, saveLayouts } from './storage.js';
+import { updateBar } from './edit-mode.js';
 import { render } from './render.js';
-import { state } from './state.js';
+import { sel, state } from './state.js';
 
 function subOpts(selectedVal) {
   fill($('type'), [
@@ -130,8 +131,10 @@ export function initTileEditor() {
       }, 3000);
       return;
     }
+    sel.delete(state.editing.id);
     state.items = state.items.filter((i) => i !== state.editing);
     save();
+    if (state.editMode) updateBar();
     render();
     $('dlg').close();
   };

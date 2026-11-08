@@ -270,13 +270,13 @@ body.dragging .gap {
   background: color-mix(in srgb, var(--ink) 8%, transparent);
 }
 
-/* Selection Mode */
+/* Selection in Edit Mode */
 body.selecting .tile .stars b,
 body.selecting .tile .bar2 {
   pointer-events: none;
 }
 
-body.selecting main {
+body.editing main {
   padding-bottom: 150px;
 }
 

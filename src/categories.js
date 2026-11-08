@@ -1,7 +1,7 @@
 // Category and sub-category manager.
 import { save, saveCats } from './storage.js';
 import { catOpts } from './tile-editor.js';
-import { selOpts } from './selection.js';
+import { selOpts } from './edit-mode.js';
 import { render } from './render.js';
 import { $ } from './dom.js';
 import { state } from './state.js';
@@ -9,7 +9,7 @@ import { state } from './state.js';
 function catsChanged() {
   saveCats();
   catOpts();
-  if (state.selMode) selOpts();
+  if (state.editMode) selOpts();
   render();
 }
 

@@ -51,6 +51,7 @@ Click any tile to open it again and change it.
 
 **Arranging your shelf**
 - In **Edit** mode, drag tiles anywhere. Other tiles move out of the way.
+- Use the bottom bar in **Edit** mode (**Select** / **Select all**) to move, resize or delete many tiles at once.
 - Make a tile bigger or smaller with the **Tile size** grid when editing it.
 - Drop image files from your computer onto empty spots to make picture tiles in one go.
 - Turn on **Basic image tile** for a tile that shows only a picture and a title.
@@ -60,7 +61,6 @@ Click any tile to open it again and change it.
   sub-categories (*Movies*, *Series*…). Click a category at the top of the shelf to show only that group.
 - Use the search box to find a title, and the sort menu to order by title, rating, progress or date added.
   **Custom** keeps your own arrangement.
-- **Select** (in the ☰ menu) lets you move, resize or delete many tiles at once.
 
 **Making it yours**
 - **Theme** switches between light and dark.

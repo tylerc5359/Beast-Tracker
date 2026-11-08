@@ -5,10 +5,9 @@ import { computeLayout, fp } from './layout.js';
 import { artStyle, ensureAR, frameOf, placeName } from './cover-editor.js';
 import { save } from './storage.js';
 import { sel, state } from './state.js';
-import { toggle } from './selection.js';
 import { openDlg } from './tile-editor.js';
 import { startDrag } from './drag.js';
-import { renderAddCells } from './edit-mode.js';
+import { renderAddCells, toggle } from './edit-mode.js';
 
 export function render() {
   measure();

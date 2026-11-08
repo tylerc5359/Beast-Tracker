@@ -60,7 +60,7 @@ src/
   drag.js           drag a tile to move it
   config.js, helpers.js, utils.js, dom.js   constants and small shared helpers
   edit-mode.js, image-drop.js, tile-editor.js, cover-editor.js, cover-art.js,
-  size-picker.js, categories.js, selection.js, toolbar.js, menu.js, backup.js, dev-tools.js
+  size-picker.js, categories.js, toolbar.js, menu.js, backup.js, dev-tools.js
   backgrounds/      store, crossfade, panel, manage, transfer, index
 ```
 Each module with buttons or events exports an `init...()` function; `src/main.js` calls them once.

@@ -3,8 +3,9 @@ import { $ } from './dom.js';
 import { exportBackgrounds, importBackgrounds } from './backgrounds/transfer.js';
 import { save, saveCats, saveLayouts, saveOrder } from './storage.js';
 import { catOpts } from './tile-editor.js';
+import { selOpts, updateBar } from './edit-mode.js';
 import { render } from './render.js';
-import { state } from './state.js';
+import { sel, state } from './state.js';
 
 // Connects this module's buttons and events to the page (called once at start-up)
 export function initBackup() {
@@ -31,11 +32,13 @@ export function initBackup() {
         const arr = Array.isArray(d) ? d : d.items;
         if (Array.isArray(arr)) {
           state.items = arr;
+          sel.clear();
           if (d.cats) {
             state.cats = d.cats;
             state.cats.forEach((k) => (k.subs = k.subs || []));
             saveCats();
             catOpts();
+            if (state.editMode) selOpts();
           }
           if (d.order) {
             state.customOrder = d.order;
@@ -47,6 +50,7 @@ export function initBackup() {
           }
           if (Array.isArray(d.backgrounds)) await importBackgrounds(d.backgrounds);
           save();
+          if (state.editMode) updateBar();
           render();
         }
       } catch (x) {

@@ -25,7 +25,6 @@
     <div class="menuwrap">
       <div class="tray" id="tray">
         <button class="btn" id="theme">Theme</button>
-        <button class="btn" id="selbtn">Select</button>
         <button class="btn" id="catbtn">Categories</button>
         <button class="btn" id="exp">Export</button>
         <button class="btn" id="imp">Import</button>
@@ -67,8 +66,9 @@
   <!-- Media Grid -->
   <main id="grid"></main>
 
-  <!-- Bulk Selection Toolbar -->
+  <!-- Bulk Selection Toolbar (shown in Edit mode) -->
   <div id="selbar" hidden>
+    <button class="btn" id="selbtn" aria-pressed="false">Select</button>
     <span id="selcount">0 selected</span>
     <button class="btn" id="selall">Select all</button>
     <select id="selcat" aria-label="Move to category"></select>
@@ -80,8 +80,7 @@
         <div class="sizepick" id="selsizepick"></div>
       </div>
     </div>
-    <button class="btn danger" id="seldel">Delete</button>
-    <button class="btn" id="seldone">Done</button>
+    <button class="btn danger" id="seldel" disabled>Delete</button>
   </div>
 
   <!-- Add / Edit Media Dialog -->
