@@ -9,11 +9,13 @@ const smooth = (t) => {
   return x * x * (3 - 2 * x); // smoothstep: gentle start and finish
 };
 
-// Two backgrounds blend over at least one screen height, centred between them
+// Two backgrounds blend centred between them. At the standard strength (100%) the blend is at least one
+// screen height; the upper background's own "blend" setting scales that (0% = hard cut).
 function blendZone(a, b) {
   const gap = b.top - a.bottom;
   const c = (a.bottom + b.top) / 2;
-  const h = Math.max(gap / 2, innerHeight / 2);
+  const strength = Math.max(0, (a.bg.blend ?? 100) / 100);
+  const h = Math.max((Math.max(gap, innerHeight) * strength) / 2, 0.5);
   return [c - h, c + h];
 }
 

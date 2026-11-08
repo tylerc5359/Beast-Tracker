@@ -25,4 +25,6 @@ export const MAX_ROWS = 6; // rows shown in the size picker
 // ---- Covers and backgrounds ----
 export const MAX_GIF_BYTES = 25 * 1024 * 1024; // GIF covers are kept as-is, so they must fit in storage
 export const MAX_TEXT = 10; // largest name size: 10x (the Text slider's 1000%)
-export const BG_DEFAULTS = { blur: 0, bright: 100, sat: 100 };
+// blend = how strongly this background fades into the next one down: 0 is a hard cut, 100 the standard
+// slow fade (one screen tall at least), 300 a very long fade
+export const BG_DEFAULTS = { blur: 0, bright: 100, sat: 100, blend: 100 };

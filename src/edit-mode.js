@@ -118,7 +118,6 @@ export function setEdit(on) {
     selOpts();
   }
   $('sort').disabled = on;
-  $('bgedit').hidden = !on;
   if (!on && $('bgdlg').open) $('bgdlg').close(); // backgrounds are only edited in Edit mode
   $('editbtn').textContent = on ? 'Done' : 'Edit';
   $('editbtn').setAttribute('aria-pressed', on);

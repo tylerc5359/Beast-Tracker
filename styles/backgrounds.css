@@ -46,10 +46,10 @@
 
 #bgdlg {
   position: fixed;
-  inset: auto 20px 20px auto;
+  inset: auto 20px calc(90px + env(safe-area-inset-bottom, 0px)) auto; /* sits just above the Edit bar */
   margin: 0;
   width: min(360px, calc(100vw - 40px));
-  max-height: calc(100vh - 140px); /* stays below the header so Edit/Done is always clickable */
+  max-height: calc(100vh - 220px); /* stays below the header and above the Edit bar */
   overflow: auto;
   z-index: 30;
 }
@@ -123,6 +123,10 @@
   gap: 2px;
   font-size: 13px;
   color: var(--mute);
+}
+
+.bgcard label[hidden] {
+  display: none;
 }
 
 .bgl {

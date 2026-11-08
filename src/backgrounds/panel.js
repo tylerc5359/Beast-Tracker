@@ -6,7 +6,7 @@ import { $ } from '../dom.js';
 import { pickBg, removeBg } from './manage.js';
 import { state } from '../state.js';
 
-function bgSlider(bg, key, label, min, max, unit) {
+function bgSlider(bg, key, label, min, max, unit, step = 1) {
   const wrap = document.createElement('label');
   const row = document.createElement('span');
   row.className = 'bgl';
@@ -19,21 +19,28 @@ function bgSlider(bg, key, label, min, max, unit) {
   input.type = 'range';
   input.min = min;
   input.max = max;
-  input.step = 1;
+  input.step = step;
   input.oninput = () => {
     bg[key] = +input.value;
     saveBgs();
     applyLayerStyle(bg);
+    updateBackgrounds(); // blend strength changes the fade straight away
     state.bgSyncs.forEach((fn) => fn());
   };
 
   wrap.append(row, input);
   const sync = () => {
-    input.value = bg[key];
-    val.textContent = `${bg[key]}${unit}`;
+    input.value = bg[key] ?? 100;
+    val.textContent = blendText(bg[key] ?? 100, key, unit);
   };
   return { el: wrap, sync };
 }
+
+// The blend slider reads "Hard cut" at 0 instead of "0%"
+const blendText = (v, key, unit) => (key === 'blend' && v === 0 ? 'Hard cut' : `${v}${unit}`);
+
+// True when another background starts below this one (so its blend setting has something to fade into)
+const hasNext = (bg) => state.bgs.some((o) => o !== bg && (o.topRow > bg.topRow || (o.topRow === bg.topRow && o.bottomRow > bg.bottomRow)));
 
 // Top / Bottom row picker (a number, plus "Here" for the row in the middle of the screen)
 function bgRowField(bg, key, label) {
@@ -120,6 +127,14 @@ export function renderBgPanel() {
     const top = bgRowField(bg, 'topRow', 'Top row');
     const bottom = bgRowField(bg, 'bottomRow', 'Bottom row');
 
+    // How strongly this background fades into the next one down (only when there is one)
+    const blend = bgSlider(bg, 'blend', 'Blend into next background', 0, 300, '%', 5);
+    const blendSync = blend.sync;
+    blend.sync = () => {
+      blendSync();
+      blend.el.hidden = !hasNext(bg);
+    };
+
     const fx = document.createElement('details');
     const sum = document.createElement('summary');
     sum.textContent = 'Effects';
@@ -128,10 +143,10 @@ export function renderBgPanel() {
     const sat = bgSlider(bg, 'sat', 'Saturation', 0, 200, '%');
     fx.append(sum, blur.el, bright.el, sat.el);
 
-    card.append(head, top.el, bottom.el, fx);
+    card.append(head, top.el, bottom.el, blend.el, fx);
     list.append(card);
 
-    [top, bottom, blur, bright, sat].forEach((s) => {
+    [top, bottom, blend, blur, bright, sat].forEach((s) => {
       s.sync();
       state.bgSyncs.push(s.sync);
     });

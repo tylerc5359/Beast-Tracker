@@ -56,7 +56,6 @@
       <option value="ratinglow">Lowest rated</option>
       <option value="progress">Most progress</option>
     </select>
-    <button class="btn" id="bgedit" hidden>Backgrounds</button>
   </div>
 
   <!-- Category & Sub-category Filter Chips -->
@@ -81,6 +80,7 @@
       </div>
     </div>
     <button class="btn danger" id="seldel" disabled>Delete</button>
+    <button class="btn" id="bgedit">Backgrounds</button>
   </div>
 
   <!-- Add / Edit Media Dialog -->
@@ -196,7 +196,7 @@
         <h2>Backgrounds</h2>
         <span class="hint">Row in view <b id="bgpos">1</b></span>
       </div>
-      <p class="hint">Each background fills the shelf from its Top row to its Bottom row. Type a row number, or scroll and press Here to use the row in the middle of the screen. Backgrounds blend slowly as you scroll between them.</p>
+      <p class="hint">Each background fills the shelf from its Top row to its Bottom row. Type a row number, or scroll and press Here to use the row in the middle of the screen. Backgrounds blend slowly as you scroll between them; use each card's “Blend into next background” slider to set how strong that fade is (0% is a hard cut).</p>
       <div class="bglist" id="bglist"></div>
       <small class="covermsg" id="bgmsg"></small>
       <input type="file" id="bgfile" accept="image/*" hidden>
